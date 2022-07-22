@@ -10,6 +10,7 @@ def home(command = 'none'):
     return f"""
         <html>
         <head>
+            <title>CRISPResso UI</title>
             <link rel="stylesheet" href="/static/style.css"/>
         </head>
         <body>
