@@ -5,7 +5,7 @@ The program uses Python3 and Flask.
 
 ## Prerequisites
 
-CRISPResso2 must be installed using bioconda method (running `CRISPResso2 -h` must not fail).
+CRISPResso2 must be installed using [bioconda method](https://github.com/pinellolab/CRISPResso2#bioconda) (running `CRISPResso2 -h` must not fail).
 
 Python3 must be installed in a Unix-like operating system (MacOS or Linux).
 
