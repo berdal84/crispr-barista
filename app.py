@@ -33,4 +33,4 @@ def home(command = 'none'):
         """
 
 def crispresso( args ):
-    system(f'CRISPResso ${args}')
+    system(f'CRISPResso {args}')
