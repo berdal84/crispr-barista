@@ -2,3 +2,11 @@
 venv/
 # Python cache
 __pycache__
+# CRISPResso output
+output/**/*
+!output/.keep
+# app uploads
+uploads
+
+# os
+.DS_store
