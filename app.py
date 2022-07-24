@@ -4,6 +4,7 @@ from os import system, path
 app = Flask(__name__)
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # Required by flash
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024    # 2 Gb limit
 
 FASTQ_R1_PATH  = "./uploads/fastq_r1.fastq"
 FASTQ_R2_PATH  = "./uploads/fastq_r2.fastq"
@@ -42,7 +43,7 @@ def run():
         if not fastq_r2:                                # fastq_r2
             flash('No fastq_r2 file', 'error')
         else:
-            fastq_r1.save(FASTQ_R2_PATH)
+            fastq_r2.save(FASTQ_R2_PATH)
             args += f' --fastq_r2 {FASTQ_R2_PATH}'
 
         if not amplicon_seq:                            # amplicon_seq
