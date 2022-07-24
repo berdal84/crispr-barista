@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # Required by flash
 
-FASTQ_R1_PATH  = "./uploads/fastq_r1"
-FASTQ_R2_PATH  = "./uploads/fastq_r2"
+FASTQ_R1_PATH  = "./uploads/fastq_r1.fastq"
+FASTQ_R2_PATH  = "./uploads/fastq_r2.fastq"
 OUTPUT_FOLDER  = "./output"
 
 @app.route("/")

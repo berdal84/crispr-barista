@@ -6,7 +6,7 @@ __pycache__
 output/**/*
 !output/.keep
 # app uploads
-uploads
-
+uploads/**/*
+!uploads/.keep
 # os
 .DS_store
