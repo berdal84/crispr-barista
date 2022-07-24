@@ -1,4 +1,4 @@
-from flask import render_template, Flask, flash, request
+from flask import render_template, Flask, flash, request, redirect
 from os import system, path
 
 app = Flask(__name__)
@@ -8,7 +8,7 @@ app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024    # 2 Gb limit
 
 FASTQ_R1_PATH  = "./uploads/fastq_r1.fastq"
 FASTQ_R2_PATH  = "./uploads/fastq_r2.fastq"
-OUTPUT_FOLDER  = "./output"
+OUTPUT_FOLDER  = "./static/output"
 
 @app.route("/")
 def index(status=" ... "):
@@ -19,6 +19,10 @@ def index(status=" ... "):
 def form():
     return render_template("form.html")
 
+@app.route("/output/")
+def result():
+    return render_template("iframe.html", iframe_src="/static/output/CRISPResso_on_fastq_r1_fastq_r2.html")
+    
 
 @app.route("/run", methods =["GET", "POST"])
 def run():

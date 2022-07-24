@@ -3,8 +3,8 @@ venv/
 # Python cache
 __pycache__
 # CRISPResso output
-output/**/*
-!output/.keep
+static/output/**/*
+!static/output/.keep
 # app uploads
 uploads/**/*
 !uploads/.keep
