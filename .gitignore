@@ -10,3 +10,5 @@ uploads/**/*
 !uploads/.keep
 # os
 .DS_store
+# large files to test the program
+testing-data
