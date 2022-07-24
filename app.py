@@ -95,7 +95,7 @@ def run():
 def check():
     status.msg = 'Checking CRISPResso ...'
     crispressoAsync('-h')
-    return json.jsonify( status )
+    return getStatus()
 
 def crispresso(args ):
     command = f'CRISPResso {args}'
@@ -108,9 +108,9 @@ def crispressoAsync( args ):
     command = f'CRISPResso {args}'
     status.msg = 'Running command ...'
     status.cmd = command
-    status.code = ' ... '
+    status.code = -1
     result = pool.apply_async(system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
-    return system( command )
+    return getStatus();
 
 def onCrispressoFinished( returnCode ):
     status.code = returnCode

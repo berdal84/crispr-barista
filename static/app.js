@@ -26,6 +26,9 @@ class App {
             const json = await (await result).json();
             if( json.code === 0 ) {
                 location.href = '/output'
+            } else if ( json.code === -1)
+            {
+                alert('Running ...' );
             } else {
                 alert('An error occured! Check status bar.' );
                 location.reload()
