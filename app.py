@@ -107,13 +107,13 @@ def run():
 
         args = ''
 
-        args += f' --fastq_r1 {FASTQ_R1_PATH}'
-        args += f' --fastq_r2 {FASTQ_R2_PATH}'
-        args += f' --amplicon_seq {amplicon_seq}'
-        args += f' --guide_seq {guide_seq}'
-        args += f" --output_folder ./static/output"
-        args += f" --n_processes {N_PROCESSES}"
-        args += f" --name output"
+        args += f'--fastq_r1 {FASTQ_R1_PATH} '
+        args += f'--fastq_r2 {FASTQ_R2_PATH} '
+        args += f'--amplicon_seq {amplicon_seq} '
+        args += f'--guide_seq {guide_seq} '
+        args += f"--output_folder ./static/output "
+        args += f"--n_processes {N_PROCESSES} "
+        args += f"--name output"
 
         # 2 - analysis
         status.msg = 'Check and run CRISPResso ...'
@@ -132,9 +132,9 @@ def run():
 
         code = crispresso(args)
         if code == SUCCESS :
-                return success( 'Command finished ...', status)
+            return success( 'Command finished ...', status)
         elif code == PENDING :
-                return success( 'Command pending ...', status)
+            return success( 'Command pending ...', status)
         return error('CRISPResso command failed!', status)
         
     else:
@@ -159,6 +159,7 @@ def crispresso(args, asyncronously=False ):
         pool.apply_async(os.system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
     else:
         status.code = os.system( command )
+    onCrispressoFinished(status.code)
     return status.code
 
 def onCrispressoFinished( returnCode ):
