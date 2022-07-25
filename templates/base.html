@@ -16,13 +16,7 @@
                     <a class="btn btn-secondary" href="/">Home</a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="btn btn-secondary" onclick="app.check()" href="#">Check CRISPResso</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <a class="btn btn-secondary" href="/form">Run</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <a class="btn btn-secondary" href="/output">Result</a>
+                    <a class="btn btn-secondary" href="/output">Last Result</a>
                 </li>
                 
             </ul>
@@ -40,8 +34,14 @@
         </div>
 
         <div class="container">
+            <p class="badge bg-secondary">CRISPResso status: <span id="crispresso-check-status"></span></p>
             {% block content %}
             {% endblock %}
+        </div>
+
+        <div id="spinner">
+            <p id="spinner-label" class="fs-5 fw-bold">Loading ...</p>
+            <div  style="width: 5rem; height: 5rem;" class="spinner-border" role="status" aria-hidden="true"></div>
         </div>
     </div>
     <script src="{{ url_for('static', filename='app.js') }}"></script>

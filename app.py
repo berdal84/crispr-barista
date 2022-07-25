@@ -1,13 +1,26 @@
+import enum
+from sre_constants import SUCCESS
 from flask import render_template, Flask, flash, request, redirect, json
 from multiprocessing import Pool
 from os import system
 from dataclasses import dataclass
 
+SUCCESS = 0
+ERROR   = 1
+PENDING = -1
+
 @dataclass
 class Status:
     cmd: str  = " ... "
     msg: str  = " ... "
-    code: str = " ... "
+    code: int = PENDING
+    checked: bool = False
+
+@dataclass
+class Response:
+    code: int
+    msg: str
+    payload: any
 
 app = Flask(__name__)
 pool = Pool(processes=1) # Start a worker processes.
@@ -29,16 +42,17 @@ def getIndex(message=""):
 
 @app.route("/status")
 def getStatus():
-    return json.jsonify( status )
-
-@app.route("/form")
-def getForm():
-    return render_template("form.html")
+    return success( "Status returned", status)
 
 @app.route("/output/")
 def getOutput():
     return render_template("iframe.html", iframe_src="/static/output/CRISPResso_on_fastq_r1_fastq_r2.html")
     
+def error( msg: str = 'Error', payload: object = {}):
+    return json.jsonify( Response( ERROR, msg, payload ) )
+
+def success( msg: str = 'Success', payload: object = {}):
+    return json.jsonify( Response( SUCCESS, msg, payload ) )
 
 @app.route("/run", methods =["GET", "POST"])
 def run():
@@ -82,39 +96,44 @@ def run():
         args += f" --output_folder {OUTPUT_FOLDER}"
 
         if fastq_r1 and fastq_r2 and amplicon_seq and guide_seq:
-            flash('Running CRISPResso with arguments ...')
-            crispressoAsync(args)
-        else:
-            flash('Unable to prepare arguments for CRISPResso!')
+            if( crispresso(args) == SUCCESS ):
+                return success( 'Command finished ...', status)
 
-        return getStatus()
+        return error('Unable to prepare arguments for CRISPResso!', status)
+        
     else:
-        return getIndex("Require to POST data.")
+        return error('/run require POST method!', status)
 
 @app.route("/check")
 def check():
+    if status.checked:
+        return success()
     status.msg = 'Checking CRISPResso ...'
-    crispressoAsync('-h')
-    return getStatus()
+    status.checked = crispresso('-h') == SUCCESS
+    if status.checked:
+        return success()
+    return error()
 
 def crispresso(args ):
     command = f'CRISPResso {args}'
-    status.msg = 'Running command ...'
+    status.msg  = 'Running command ...'
     status.code = ' ... '
-    status.cmd = command
+    status.cmd  = command
     status.code = system( command )
+    return status.code
 
 def crispressoAsync( args ):
-    command = f'CRISPResso {args}'
-    status.msg = 'Running command ...'
-    status.cmd = command
-    status.code = -1
-    result = pool.apply_async(system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
-    return getStatus();
+    command     = f'CRISPResso {args}'
+    msg         = 'Running command ...'
+    status.msg  = msg
+    status.cmd  = command
+    status.code = PENDING
+    pool.apply_async(system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
+    return success( msg, command)
 
 def onCrispressoFinished( returnCode ):
     status.code = returnCode
-    if( returnCode == 0 ):
+    if( returnCode == SUCCESS ):
         status.msg = 'Command return SUCCESS'
     else:
         status.msg = 'Command return ERROR'
