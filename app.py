@@ -143,11 +143,10 @@ def run():
 @app.route("/check")
 def check():
     if status.checked:
-        return success()
-    status.msg = 'Checking CRISPResso ...'
-    status.checked = crispresso('-h') == SUCCESS
-    if status.checked:
-        return success()
+        return success("Already checked")
+    if crispresso("-h") == SUCCESS:
+        status.checked = True
+        return success("First check")
     return error()
 
 def crispresso(args, asyncronously=False ):
@@ -158,10 +157,9 @@ def crispresso(args, asyncronously=False ):
     status.code = PENDING
     if asyncronously:
         pool.apply_async(os.system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
-        return success( msg, command)
     else:
         status.code = os.system( command )
-        return success( msg, command)
+    return status.code
 
 def onCrispressoFinished( returnCode ):
     status.code = returnCode

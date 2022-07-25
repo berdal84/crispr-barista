@@ -47,13 +47,13 @@ class App {
 
                 if( response.code === SUCCESS )
                 {
-                    if( response.payload.code === SUCCESS ) {
-                        location.href = '/output'
-                    }
-                    else
+                    switch( response.payload.code )
                     {
-                        alert('An error occured! Check status bar.' );
-                        location.reload()
+                        case SUCCESS:
+                            location.href = '/output'
+                        
+                        case ERROR:
+                            alert('An error occured! Check status bar.' );
                     }
                 }
                 else if( response.code === ERRROR )
