@@ -51,6 +51,7 @@ class App {
                     {
                         case SUCCESS:
                             location.href = '/output'
+                            break;
                         
                         case ERROR:
                             alert('An error occured! Check status bar.' );
