@@ -40,8 +40,11 @@
         </div>
 
         <div id="spinner">
-            <p id="spinner-label" class="fs-5 fw-bold">Please wait ...</p>
-            <div  style="width: 5rem; height: 5rem;" class="spinner-border" role="status" aria-hidden="true"></div>
+            <div class="bg-white p-5 d-flex flex-column align-items-center">
+                <div  style="width: 5rem; height: 5rem;" class="spinner-border mb-3" role="status" aria-hidden="true"></div>
+                <p id="spinner-label" class="fs-5 fw-bold">Please wait</p>
+                <p id="spinner-msg" class="fs-6"></p>
+            </div>
         </div>
     </div>
     <script src="{{ url_for('static', filename='app.js') }}"></script>

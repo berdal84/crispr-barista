@@ -125,6 +125,13 @@ class App {
         }
 
         {
+            const el = document.getElementById("spinner-msg");
+            const txt = response.payload.msg;
+            if( el.innerText !== txt )
+                el.innerText = txt
+        }
+
+        {
             const el = document.getElementById("status-cmd");
             const txt = `command: ${response.payload.cmd}`;
             if( el.innerText !== txt )
