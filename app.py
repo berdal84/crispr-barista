@@ -32,7 +32,7 @@ app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024    # 2 Gb limit
 
 FASTQ_R1_PATH  = "./uploads/fastq_r1.fastq"
 FASTQ_R2_PATH  = "./uploads/fastq_r2.fastq"
-OUTPUT_FOLDER  = "./static/output"
+N_PROCESSES    = 'max'
 
 @app.route("/")
 def getIndex(message=""):
@@ -46,7 +46,7 @@ def getStatus():
 
 @app.route("/output/")
 def getOutput():
-    return render_template("iframe.html", iframe_src="/static/output/CRISPResso_on_fastq_r1_fastq_r2.html")
+    return render_template("iframe.html", iframe_src=f"/static/output/CRISPResso_on_output.html")
     
 def error( msg: str = 'Error', payload: object = {}):
     return json.jsonify( Response( ERROR, msg, payload ) )
@@ -93,7 +93,9 @@ def run():
         else:
             args += f' --guide_seq {guide_seq}'
 
-        args += f" --output_folder {OUTPUT_FOLDER}"
+        args += f" --output_folder ./static/output"     # --output_folder
+        args += f" --n_processes {N_PROCESSES}"         # --n_processes
+        args += f" --name output"                # --name: Output name of the report
 
         if fastq_r1 and fastq_r2 and amplicon_seq and guide_seq:
             if( crispresso(args) == SUCCESS ):
