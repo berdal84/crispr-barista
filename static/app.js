@@ -14,6 +14,18 @@ class App {
         console.log('App start()')
         this.update();
         this.check();
+
+        const splitCheckbox  = document.getElementById('split')
+        const fastqR2Fs      = document.getElementById('fastq-r2-fs')
+        const fastqR2SplitOn = document.getElementById('fastq-r2-split-on')
+        
+
+        splitCheckbox.addEventListener('change', (event) => {
+            const splitOn = event.currentTarget.checked
+            fastqR2Fs.disabled        = splitOn
+            fastqR2SplitOn.hidden     = !splitOn
+        })
+
         document.addEventListener('submit', async (e) => {
             // Store reference to form to make later code easier to read
             const form = e.target;
@@ -28,26 +40,32 @@ class App {
             e.preventDefault();
 
             this.setSpinner(true)
-            const response = await (await result).json();
-            this.setSpinner(false)
-            
-            if( response.code === SUCCESS )
-            {
-                if( response.payload.code === SUCCESS ) {
-                    location.href = '/output'
-                }
-                else if ( response.payload.code === PENDING )
-                {
-                    alert('Running ...' );
-                } else {
-                    alert('An error occured! Check status bar.' );
-                    location.reload()
-                }
-            }
-            else
-            {
 
+        
+            try {
+                const response = await (await result).json();
+
+                if( response.code === SUCCESS )
+                {
+                    if( response.payload.code === SUCCESS ) {
+                        location.href = '/output'
+                    }
+                    else
+                    {
+                        alert('An error occured! Check status bar.' );
+                        location.reload()
+                    }
+                }
+                else if( response.code === ERRROR )
+                {
+                    alert( `Error: ${response.msg}` );
+                }
+            } 
+            catch( e ) {
+                alert('Server internal error!' );
             }
+
+            this.setSpinner(false)
             
         });
     }
@@ -96,7 +114,7 @@ class App {
             el.innerText = `Last return code: ${response.payload.code}`;
         }
 
-        setTimeout( () => this.update(), 1000 ); // loop back
+        setTimeout( () => this.update(), 100 ); // loop back
     }
 }
 

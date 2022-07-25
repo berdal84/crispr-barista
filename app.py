@@ -1,9 +1,14 @@
-import enum
+from ast import Str
+from json import dump
+from sys import path
+path.insert(0, 'src/fastq.py')
+
 from sre_constants import SUCCESS
-from flask import render_template, Flask, flash, request, redirect, json
+from flask import jsonify, render_template, Flask, flash, request, redirect, json
 from multiprocessing import Pool
-from os import system
+import os
 from dataclasses import dataclass
+from src.fastq import Fastq
 
 SUCCESS = 0
 ERROR   = 1
@@ -30,6 +35,7 @@ status = Status()
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # Required by flash
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024 * 1024    # 2 Gb limit
 
+FASTQ_TO_SPLIT_PATH = "./uploads/fastq_to_split.fastq"
 FASTQ_R1_PATH  = "./uploads/fastq_r1.fastq"
 FASTQ_R2_PATH  = "./uploads/fastq_r2.fastq"
 N_PROCESSES    = 'max'
@@ -59,49 +65,77 @@ def run():
 
     if request.method == "POST":
 
-        flash('Preparing arguments for CRISPResso ...')
+        status.msg = 'Preparing arguments for CRISPResso ...'
+        status.cmd = 'run()'
+        status.code = PENDING
 
-        status.code = ' ... '
+        # clear old files
 
-        fastq_r1 = request.files['fastq_r1']
-        fastq_r2 = request.files['fastq_r2']
+        status.msg = "Cleaning existing files ..."
+        if os.path.exists(FASTQ_R1_PATH):
+            os.remove(FASTQ_R1_PATH)
+        if os.path.exists(FASTQ_R2_PATH):
+            os.remove(FASTQ_R2_PATH)
+        if os.path.exists(FASTQ_TO_SPLIT_PATH):
+            os.remove(FASTQ_TO_SPLIT_PATH)
 
+        # get form/files from request
+        status.msg = "Getting request form values and files ..."
+        split_on        = request.form.get('split', False)
+        fastq_r1        = request.files.get('fastq_r1')
+        fastq_r2        = request.files.get('fastq_r2')
         amplicon_seq    = request.form.get("amplicon_seq")
         guide_seq       = request.form.get("guide_seq")
+        
+        # prepare files
+        if not split_on:
+            fastq_r1.save(FASTQ_R1_PATH)
+            fastq_r2.save(FASTQ_R2_PATH)
+        else:
+            status.msg = 'Splitting ...'
+            fastq_r1.save(FASTQ_TO_SPLIT_PATH)
+
+            if not Fastq.split_r1r2( FASTQ_TO_SPLIT_PATH, FASTQ_R1_PATH, FASTQ_R2_PATH ):
+                return error("Unable to split %s" %FASTQ_TO_SPLIT_PATH)
+            status.msg = 'Splitting OK, try to open files ...'
+            fastq_r1 = open(FASTQ_R1_PATH)
+            fastq_r2 = open(FASTQ_R2_PATH)
+
+
+        # build argument string
+        status.msg = 'Making command line arguments ...'
 
         args = ''
 
-        if not fastq_r1:                                # fastq_r1
-            flash('No fastq_r1 file')
-        else:
-            fastq_r1.save(FASTQ_R1_PATH)
-            args += f' --fastq_r1 {FASTQ_R1_PATH}'
+        args += f' --fastq_r1 {FASTQ_R1_PATH}'
+        args += f' --fastq_r2 {FASTQ_R2_PATH}'
+        args += f' --amplicon_seq {amplicon_seq}'
+        args += f' --guide_seq {guide_seq}'
+        args += f" --output_folder ./static/output"
+        args += f" --n_processes {N_PROCESSES}"
+        args += f" --name output"
 
-        if not fastq_r2:                                # fastq_r2
-            flash('No fastq_r2 file')
-        else:
-            fastq_r2.save(FASTQ_R2_PATH)
-            args += f' --fastq_r2 {FASTQ_R2_PATH}'
+        # 2 - analysis
+        status.msg = 'Check and run CRISPResso ...'
 
-        if not amplicon_seq:                            # amplicon_seq
-            flash('No amplicon_seq file')
-        else:
-            args += f' --amplicon_seq {amplicon_seq}'
+        if not fastq_r1:
+            return error('Unable to open the fastq R1!', status)
 
-        if not guide_seq:                               # guide_seq
-            flash('No guide_seq file')
-        else:
-            args += f' --guide_seq {guide_seq}'
+        if not fastq_r2:
+            return error('Unable to open the fastq R2!', status)
+            
+        if not amplicon_seq:
+            return error('No amplicon sequence specified!', status)
 
-        args += f" --output_folder ./static/output"     # --output_folder
-        args += f" --n_processes {N_PROCESSES}"         # --n_processes
-        args += f" --name output"                # --name: Output name of the report
+        if not guide_seq:
+            return error('No amplicon sequence specified!', status)
 
-        if fastq_r1 and fastq_r2 and amplicon_seq and guide_seq:
-            if( crispresso(args) == SUCCESS ):
+        code = crispresso(args)
+        if code == SUCCESS :
                 return success( 'Command finished ...', status)
-
-        return error('Unable to prepare arguments for CRISPResso!', status)
+        elif code == PENDING :
+                return success( 'Command pending ...', status)
+        return error('CRISPResso command failed!', status)
         
     else:
         return error('/run require POST method!', status)
@@ -116,22 +150,18 @@ def check():
         return success()
     return error()
 
-def crispresso(args ):
-    command = f'CRISPResso {args}'
-    status.msg  = 'Running command ...'
-    status.code = ' ... '
-    status.cmd  = command
-    status.code = system( command )
-    return status.code
-
-def crispressoAsync( args ):
+def crispresso(args, asyncronously=False ):
     command     = f'CRISPResso {args}'
     msg         = 'Running command ...'
     status.msg  = msg
-    status.cmd  = command
+    status.cmd  = command # FixMe: before to put in production ! Clean command
     status.code = PENDING
-    pool.apply_async(system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
-    return success( msg, command)
+    if asyncronously:
+        pool.apply_async(os.system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
+        return success( msg, command)
+    else:
+        status.code = os.system( command )
+        return success( msg, command)
 
 def onCrispressoFinished( returnCode ):
     status.code = returnCode
