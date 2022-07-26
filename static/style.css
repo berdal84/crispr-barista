@@ -66,3 +66,8 @@ footer {
     flex-direction: column;
     background-color: rgba(255,255,255,0.5);
 }
+
+#spinner-msg {
+    max-width: 60vw;
+    word-break: break-all;
+}

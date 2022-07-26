@@ -89,6 +89,7 @@ def run():
         
         # prepare files
         if not split_on:
+            status.msg = 'Saving fastq files ...'
             fastq_r1.save(FASTQ_R1_PATH)
             fastq_r2.save(FASTQ_R2_PATH)
         else:
@@ -101,22 +102,8 @@ def run():
             fastq_r1 = open(FASTQ_R1_PATH)
             fastq_r2 = open(FASTQ_R2_PATH)
 
-
-        # build argument string
-        status.msg = 'Making command line arguments ...'
-
-        args = ''
-
-        args += f'--fastq_r1 {FASTQ_R1_PATH} '
-        args += f'--fastq_r2 {FASTQ_R2_PATH} '
-        args += f'--amplicon_seq {amplicon_seq} '
-        args += f'--guide_seq {guide_seq} '
-        args += f"--output_folder ./static/output "
-        args += f"--n_processes {N_PROCESSES} "
-        args += f"--name output"
-
         # 2 - analysis
-        status.msg = 'Check and run CRISPResso ...'
+        status.msg = 'Checking arguments ...'
 
         if not fastq_r1:
             return error('Unable to open the fastq R1!', status)
@@ -129,6 +116,19 @@ def run():
 
         if not guide_seq:
             return error('No amplicon sequence specified!', status)
+
+        # build argument string
+        status.msg = 'Running CRISPResso command ...'
+
+        args = ''
+
+        args += f'--fastq_r1 {FASTQ_R1_PATH} '
+        args += f'--fastq_r2 {FASTQ_R2_PATH} '
+        args += f'--amplicon_seq {amplicon_seq} '
+        args += f'--guide_seq {guide_seq} '
+        args += f"--output_folder ./static/output "
+        args += f"--n_processes {N_PROCESSES} "
+        args += f"--name output"
 
         code = crispresso(args)
         if code == SUCCESS :
@@ -151,7 +151,7 @@ def check():
 
 def crispresso(args, asyncronously=False ):
     command     = f'CRISPResso {args}'
-    msg         = 'Running command ...'
+    msg         = f'Running {command}'
     status.msg  = msg
     status.cmd  = command # FixMe: before to put in production ! Clean command
     status.code = PENDING
