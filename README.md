@@ -1,7 +1,7 @@
-# CRISPResso UI
+# CRISPR Barista
 
-This is a simple UI to use localy CRISPResso from a web user interface.
-The program uses Python3 and Flask.
+*CRISPR Barista* is a simple UI to drive your command line CRISPResso2 program.
+The program uses Python3.7+, Flask and Boostrap.
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@ Launches the application in debug mode.
 
 ## Captures
 
-<p align="center">
-  <img width="600" align="center" src="https://user-images.githubusercontent.com/942052/180898399-0bb94abc-8436-4cce-b7a4-8b7b1e9cb334.png"/>
-</p>
+<div align="center">
+  <img width="600" src="./img/github-capture-01.png"/>
+</div>
 
