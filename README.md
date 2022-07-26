@@ -36,6 +36,10 @@ Launches the application in debug mode.
 ## Captures
 
 <div align="center">
-  <img width="600" src="./img/github-capture-01.png"/>
+  <p>Main interface</p>
+  <img width="600" src="./img/github-capture-home.png"/>
+  <br><br>
+  <p>Result page</p>
+  <img width="600" src="./img/github-capture-last-result.png"/>
 </div>
 
