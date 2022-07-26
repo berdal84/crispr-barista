@@ -22,22 +22,11 @@
             </ul>
         </header>
 
-        <div id="status">
-            <div id="status-frame" class="m-3 p-3">
-                <h4>Status:</h4>
-                <ul>
-                    <li id="status-cmd"></li>
-                    <li id="status-msg"></li>
-                    <li id="status-code"></li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="container">
+        <main class="container w-80">
             <p class="badge bg-secondary">CRISPResso status: <span id="crispresso-check-status"></span></p>
             {% block content %}
             {% endblock %}
-        </div>
+        </main>
 
         <div id="spinner">
             <div class="bg-white p-5 d-flex flex-column align-items-center">
@@ -46,6 +35,23 @@
                 <p id="spinner-msg" class="fs-6"></p>
             </div>
         </div>
+
+        <footer class="d-flex flex-column align-items-center">
+
+            <div id="status" class="m-3 p-3">
+                <h4>Status:</h4>
+                <ul>
+                    <li id="status-cmd"></li>
+                    <li id="status-msg"></li>
+                    <li id="status-code"></li>
+                </ul>
+            </div>
+
+            <p>CRISPResso UI is developped by <a href="https://www.dalle-cort.fr">Berenger Dalle-Cort</a>. This program uses CRISPResso2, Python, Flask and Bootstrap.</p>
+        </footer>
+
+        
+
     </div>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
