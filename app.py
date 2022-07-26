@@ -146,8 +146,8 @@ def check():
         return success("Already checked")
     if crispresso("-h") == SUCCESS:
         status.checked = True
-        return success("First check")
-    return error()
+        return success("Check succeed")
+    return error("Check failed!")
 
 def crispresso(args, asyncronously=False ):
     command     = f'CRISPResso {args}'
@@ -159,7 +159,7 @@ def crispresso(args, asyncronously=False ):
         pool.apply_async(os.system, [command], callback=onCrispressoFinished ) # Evaluate "f(10)" asynchronously calling callback when finished.
     else:
         status.code = os.system( command )
-    onCrispressoFinished(status.code)
+        onCrispressoFinished(status.code)
     return status.code
 
 def onCrispressoFinished( returnCode ):
