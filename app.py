@@ -40,11 +40,17 @@ FASTQ_R1_PATH  = "./uploads/fastq_r1.fastq"
 FASTQ_R2_PATH  = "./uploads/fastq_r2.fastq"
 N_PROCESSES    = 'max'
 
+def error( msg: str = 'Error', payload: object = {}):
+    return json.jsonify( Response( ERROR, msg, payload ) )
+
+def success( msg: str = 'Success', payload: object = {}):
+    return json.jsonify( Response( SUCCESS, msg, payload ) )
+
 @app.route("/")
 def getIndex(message=""):
     if message:
         status.msg = message
-    return render_template("index.html", status=status)
+    return render_template("index.html", header_text="Home", status=status)
 
 @app.route("/status")
 def getStatus():
@@ -52,14 +58,8 @@ def getStatus():
 
 @app.route("/output/")
 def getOutput():
-    return render_template("iframe.html", iframe_src=f"/static/output/CRISPResso_on_output.html")
+    return render_template("iframe.html", header_text="Last result", iframe_src=f"/static/output/CRISPResso_on_output.html")
     
-def error( msg: str = 'Error', payload: object = {}):
-    return json.jsonify( Response( ERROR, msg, payload ) )
-
-def success( msg: str = 'Success', payload: object = {}):
-    return json.jsonify( Response( SUCCESS, msg, payload ) )
-
 @app.route("/run", methods =["GET", "POST"])
 def run():
 
