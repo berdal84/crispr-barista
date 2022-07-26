@@ -37,9 +37,12 @@ Launches the application in debug mode.
 
 <div align="center">
   <p>Main interface</p>
-  <img width="600" src="./img/github-capture-home.png"/>
+  <img width="600" src="./img/capture-home.png"/>
   <br><br>
-  <p>Result page</p>
-  <img width="600" src="./img/github-capture-last-result.png"/>
+  <p>Form filled using a double reads fastq file</p>
+  <img width="600" src="./img/capture-form-filled.png"/>
+  <br><br>
+  <p>CRISPResso2 results</p>
+  <img width="600" src="./img/capture-results.png"/>
 </div>
 
