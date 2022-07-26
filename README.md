@@ -9,6 +9,12 @@ The program uses Python3 and Flask.
 
 Python3.7+ must be installed in a Unix-like operating system (MacOS or Linux).
 
+## Limitations
+
+Handle only those parameters: `--fastq_r1`, `--fastq_r2`, `--amplicon_seq` and `--guide_seq`
+
+In case you have a single `fastq` file containing 2 reads, you can check `split`, the program will split the files for you.
+
 ## Usage
 
 ### `./install.sh`
