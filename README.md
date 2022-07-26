@@ -26,3 +26,10 @@ Once you see `* Running on http://127.0.0.1:5000 (Press CTRL+C to quit)` open `h
 ### `./dev.sh`
 
 Launches the application in debug mode.
+
+## Captures
+
+<p align="center">
+  <img width="600" align="center" src="https://user-images.githubusercontent.com/942052/180898399-0bb94abc-8436-4cce-b7a4-8b7b1e9cb334.png"/>
+</p>
+
